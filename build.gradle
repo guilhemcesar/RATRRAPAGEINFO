@@ -1,0 +1,41 @@
+plugins {
+    id 'java'
+    id 'idea'
+    id 'eclipse'
+}
+
+// à changer par votre identifiant de connection
+ext.studentName = 'prenom.nom'
+////////////////////////////////////////////////
+
+sourceCompatibility = 8
+defaultTasks 'test'
+repositories { mavenCentral() }
+
+dependencies {
+    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.4.+'
+    testRuntimeOnly group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.4.+'
+}
+
+test {
+    dependsOn 'cleanTest'
+    useJUnitPlatform()
+    testLogging.quiet {
+        events 'failed', 'skipped', 'passed', 'standard_error'
+    }
+    group = '[[[ Examen java ]]]'
+}
+
+task zip(type: Zip) {
+    from 'src/main/java', 'src/test/java'
+    include 'imt/uvinfo/**/*.java'
+    archiveFileName = "${studentName.replace('.', '_')}.zip"
+    destinationDirectory = rootDir
+    group = '[[[ Examen java ]]]'
+    description 'Prepares the deliverable code archive.'
+}
+
+// jumping hoops to fix project encoding everywhere (hopefully)
+tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
+}
